@@ -10,7 +10,7 @@
 }
 rect{
   fill: steelblue;
-  stroke: none;
+  stroke: black;
   stroke-width: 1.5px;
   fill-opacity: 0.4;
 }
@@ -58,7 +58,7 @@ svg , g
                                   
                                   
                                 
-                                       <div id="graph" style="width:600px; height:200px; z-index:1"></div>
+                                       <div id="graph" style="width:600px; height:260px; z-index:1"></div>
                                         <div id="map" style="width:720px; height:560px; z-index:1"></div>
                                         <div><canvas id="canvas" width="256px" height="256px" style="width:256px; height:256px; z-index:2 align:right; "></canvas></div>
                                   
@@ -319,34 +319,35 @@ svg , g
                                             g = svg.append("g");
                                           
                                              function randomData() {
-                                                 return d3.range(8).map(function(i) {
-                                                     return {x: i*10,  y: Math.random()*255};
+                                                 return d3.range(10).map(function(i) {
+                                                     return {x: i*1.2/10,  y: Math.random()*255};
                                                  });
                                              }
-                                            var data = randomData();// [             // d3.range(10).map(function(i) {
-                                            // return {x: i / 10, y: (Math.sin(i / 3) + 2) / 4};
-                                            // });
-
+                                             
+                                          
+                                                 
+                                            var data = randomData();
+                                            // 
                                             var margin = {top: 10, right: 10, bottom: 20, left: 40},
-                                                width = 640 - margin.left - margin.right,
-                                                height = 180 - margin.top - margin.bottom;
-
+                                                 width = 640 - margin.left - margin.right,
+                                                 height =255.0 - margin.top - margin.bottom;
+                                             // 
                                             var x = d3.scale.linear()
-                                                .domain([0, 70])
-                                                .range([0, width]);
-
+                                                  .domain([0,2.35])
+                                                  .range([0, width]);
+                                                 
                                             var y = d3.scale.linear()
-                                                .domain([0, 255])
-                                                .range([height, 0]);
+                                                  .domain([0, 255])
+                                                  .range([height, 0]);
+  
+                                           var xAxis = d3.svg.axis()
+                                             .scale(x)
+                                             .orient("bottom");
 
-                                            var xAxis = d3.svg.axis()
-                                                .scale(x)
-                                                .orient("bottom");
-
-                                            var yAxis = d3.svg.axis()
-                                                .scale(y)
-                                                .orient("left");
-
+                                          var yAxis = d3.svg.axis()
+                                             .scale(y)
+                                             .orient("left");
+                                           
                                             var line = d3.svg.line()
                                                 .x(function(d) { return x(d.x); })
                                                 .y(function(d) { return y(d.y); });
@@ -378,30 +379,43 @@ svg , g
                                       //band 5 (1.55-1.75 μm, mid-infrared)
                                       //band 6 (10.40-12.50 μm, thermal infrared)
                                       //band 7 (2.08-2.35 μm mid-infrared)
-                                       var dataset = [
-                                          { x:0.45, width:0.52},
-                                          { x:0.52, width:0.60}, 
-                                          { x:0.63, width:0.69 },
+                                          var dataset = [
+                                             { xs:0.45, xe:0.52, text:"1"},
+                                             { xs:0.52, xe:0.60, text:"2"}, 
+                                             { xs:0.63, xe:0.69, text:"3" },
 
-                                          { x:0.76, width:0.90 },
-                                          { x:1.55, width:1.75 },
-                                          { x:10.40, width:12.50 },
-                                          { x:2.08, width:2.35 }
-                                          ];
+                                             { xs:0.76, xe:0.90, text:"4" },
+                                             { xs:1.55, xe:1.75, text:"5" }, 
+                                             { xs:10.40, xe:12.50, text:"6" },
+                                              { xs:2.08, xe:2.35, text:"7" }, 
                                           
-                                          
-                                          
-                                             
-                                        svg.selectAll("rect")
+                                             ];
+                                              // 
+                                           
+                                        var rect= svg.selectAll("rect")
                                              .data(dataset)
                                              .enter().append("rect")
+                                             .attr("x", function(d) { return x(d.xs) }) //x(d) scale according to x
+                                             .attr("y", 20)
+                                             .attr("width", function(d) { return x(d.xe - d.xs); })
+                                             .attr("height", 200)
                                              
-                                             .attr("x", function(d) { return d.x; })
-                                             .attr("y", 0)
-                                             .attr("width", function(d) { return d.width; })
-                                             .attr("height", 100);
-
-
+                                             
+                                           
+                                        var text =      svg.selectAll("band_text")
+                                                .data(dataset)
+                                                .enter()
+                                                .append("text")
+                                                .text(function(d) { return d.text; })
+                                                .attr("x", function(d) {return x(d.xs); })
+                                                .attr("y", function(d) { return 15;})
+                                                // .attr("text-anchor", "middle")
+                                                .attr("font-family", "sans-serif")
+                                                .attr("font-size", "12px")
+                                                .attr("fill", "blue");
+                                                
+                                                
+                                                  
                                             svg.selectAll(".dot")
                                                 .data(data)
                                                 .enter().append("circle")
