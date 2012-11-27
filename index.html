@@ -8,7 +8,12 @@
   stroke: #000;
   shape-rendering: crispEdges;
 }
-
+rect{
+  fill: steelblue;
+  stroke: none;
+  stroke-width: 1.5px;
+  fill-opacity: 0.4;
+}
 .line {
   fill: none;
   stroke: steelblue;
@@ -312,6 +317,7 @@ svg , g
                                           	/* We simply pick up the SVG from the map object */
                                             var svg = d3.select("#graph").select("svg"),
                                             g = svg.append("g");
+                                          
                                              function randomData() {
                                                  return d3.range(8).map(function(i) {
                                                      return {x: i*10,  y: Math.random()*255};
@@ -365,6 +371,37 @@ svg , g
                                                  .attr("class", "line")
                                                  .attr("d", line);
 
+                                    //band 1 (0.45-0.52 μm, blue-green)
+                                      //band 2 (0.52-0.60 μm, green)
+                                      //band 3 (0.63-0.69 μm, red)
+                                      //band 4 (0.76-0.90 μm, near infrared)
+                                      //band 5 (1.55-1.75 μm, mid-infrared)
+                                      //band 6 (10.40-12.50 μm, thermal infrared)
+                                      //band 7 (2.08-2.35 μm mid-infrared)
+                                       var dataset = [
+                                          { x:0.45, width:0.52},
+                                          { x:0.52, width:0.60}, 
+                                          { x:0.63, width:0.69 },
+
+                                          { x:0.76, width:0.90 },
+                                          { x:1.55, width:1.75 },
+                                          { x:10.40, width:12.50 },
+                                          { x:2.08, width:2.35 }
+                                          ];
+                                          
+                                          
+                                          
+                                             
+                                        svg.selectAll("rect")
+                                             .data(dataset)
+                                             .enter().append("rect")
+                                             
+                                             .attr("x", function(d) { return d.x; })
+                                             .attr("y", 0)
+                                             .attr("width", function(d) { return d.width; })
+                                             .attr("height", 100);
+
+
                                             svg.selectAll(".dot")
                                                 .data(data)
                                                 .enter().append("circle")
@@ -386,7 +423,6 @@ svg , g
                                                       .attr("r", 3.5);
                                                     
                                               d3.selectAll("path.line")
-                                               
                                                 .data([data]) // set the new data
                                                 .attr("d", line); // apply the new data values
 
@@ -396,16 +432,15 @@ svg , g
                                             		  
                                             }                                           
                                             map.on('click', function(e) {
-                                              // var pnr = getTileNumber(e.latlng.lat, e.latlng.lng, map.getZoom());
+                                               var pnr = getTileNumber(e.latlng.lat, e.latlng.lng, map.getZoom());
                                               popup.setLatLng(e.latlng);
                                               popup.setContent("You clicked the map at " + e.latlng.toString() + 
-                                              // "<br> and path and row numbers: " + pnr.Path+ ", "+ pnr.Row +
+                                              "<br> and path and row numbers: " + pnr.Path+ ", "+ pnr.Row +
                                               "<br> layerPoint: " + e.layerPoint +
-                                              "<br> containerPoint: " + e.containerPoint  
-                                              // "<br> Red: " + pnr.Data[0] + " Green" + pnr.Data[1] + " Blue: " + pnr.Data[2] + " Alpha: " + pnr.Data[3]
+                                              "<br> containerPoint: " + e.containerPoint +
+                                              "<br> Red: " + pnr.Data[0] + " Green" + pnr.Data[1] + " Blue: " + pnr.Data[2] + " Alpha: " + pnr.Data[3]
                                               );
                                               map.openPopup(popup);
-
                                               update();
 
                                             });
