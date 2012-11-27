@@ -49,369 +49,368 @@ svg , g
                            
                                     </style>
  
-                                <body onload="initmap()">
-                                  <script>
-                                   function randomData() {
-                                       return d3.range(8).map(function(i) {
-                                           return {x: i*10,  y: Math.random()*255};
-                                       });
-                                   }
-                                  var data = randomData();// [             // d3.range(10).map(function(i) {
-                                  // return {x: i / 10, y: (Math.sin(i / 3) + 2) / 4};
-                                  // });
-
-                                  var margin = {top: 10, right: 10, bottom: 20, left: 40},
-                                      width = 640 - margin.left - margin.right,
-                                      height = 180 - margin.top - margin.bottom;
-
-                                  var x = d3.scale.linear()
-                                      .domain([0, 70])
-                                      .range([0, width]);
-
-                                  var y = d3.scale.linear()
-                                      .domain([0, 255])
-                                      .range([height, 0]);
-
-                                  var xAxis = d3.svg.axis()
-                                      .scale(x)
-                                      .orient("bottom");
-
-                                  var yAxis = d3.svg.axis()
-                                      .scale(y)
-                                      .orient("left");
-
-                                  var line = d3.svg.line()
-                                      .x(function(d) { return x(d.x); })
-                                      .y(function(d) { return y(d.y); });
-
-                                  var svg = d3.select("body").append("svg")
-                                      .datum(data)
-                                      .attr("width", width + margin.left + margin.right)
-                                      .attr("height", height + margin.top + margin.bottom)
-                                    .append("g")
-                                      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-                                  svg.append("g")
-                                      .attr("class", "x axis")
-                                      .attr("transform", "translate(0," + height + ")")
-                                      .call(xAxis);
-
-                                  svg.append("g")
-                                      .attr("class", "y axis")
-                                      .call(yAxis);
-
-                                  svg.append("path")
-                                      .attr("class", "line")
-                                      .attr("d", line);
-
-                                  svg.selectAll(".dot")
-                                      .data(data)
-                                      .enter().append("circle")
-                                      .attr("class", "dot")
-                                      .attr("cx", line.x())
-                                      .attr("cy", line.y())
-                                      .attr("r", 3.5);
-
-                                   
-                                  </script>
-                                  <!-- <script>
-
-                                  d3.select("body")
-                                      .datum(irwinHallDistribution(10, 10))
-                                    .call(histogramChart()
-                                      .bins(d3.scale.linear().ticks(20))
-                                      .tickFormat(d3.format(".02f")));
-
-                                  function irwinHallDistribution(n, m) {
-                                    var distribution = [];
-                                    for (var i = 0; i < n; i++) {
-                                      for (var s = 0, j = 0; j < m; j++) {
-                                        s += Math.random();
-                                      }
-                                      distribution.push(s / m);
-                                    }
-                                    return distribution;
-                                  }
-
-                                  </script> -->
-                               
-                                        <!-- <div id="histogram" style="width:60%; height:1000px; z-index:1"></div> -->
+                                  
+                                  
+                                  
+                                
+                                       <div id="graph" style="width:600px; height:200px; z-index:1"></div>
                                         <div id="map" style="width:720px; height:560px; z-index:1"></div>
                                         <div><canvas id="canvas" width="256px" height="256px" style="width:256px; height:256px; z-index:2 align:right; "></canvas></div>
                                   
                                 
                                   
-                                  <script type="text/javascript">
-                                  
-                                   /// map
-                                   var map;
-                                   var mapMinZoom = 7;
-                                   var mapMaxZoom = 12;
+                                          <script>
+                                                                                  function deg2rad (angle) {
+                                                                                    // http://kevin.vanzonneveld.net
+                                                                                    // +   original by: Enrique Gonzalez
+                                                                                    // +     improved by: Thomas Grainger (http://graingert.co.uk)
+                                                                                    // *     example 1: deg2rad(45);
+                                                                                    // *     returns 1: 0.7853981633974483
+                                                                                    return angle * .017453292519943295; // (angle / 180) * Math.PI;
+                                                                                  }
+                                                                                  function ImageExist(url) 
+                                                                                  {
+                                                                                     var img = new Image();
+                                                                                     img.src = url;
+                                                                                     return img.height != 0;
+                                                                                  }
 
-                                   var canvas,context;
-                                   function Color(r,g,b)
-                                   {
-                                     this.Red = r;
-                                     this.Green = g;
-                                     this.Blue = b;
-                                   }
-                                    
-                                    function PathAndRow(path, row )
-                                    {
-                                      var pathandrow = {
-                                        path : path,
-                                        row: row
-                                      };
-                                      this.Path = path;
-                                      this.Row = row;
-                                    }
-                                    
-                                     function PathRowXYandData(path, row, x, y, data )
-                                      {
-                                        var pathandrow = {
-                                          path : path,
-                                          row: row
-                                        };
-                                        this.Path = path;
-                                        this.Row = row;
-                                        this.x = x; 
-                                        this.y = y;
-                                        this.Data = data; 
-                                        
-                                      }
-                                   function initmap(){
-                                       // set up the map
-                                       map = new L.Map('map');
-                                       // create OSM tile layer with correct attribution
-                                       var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-                                       var osmAttrib='Map data Â© OpenStreetMap contributors';
-                                       var osm = new L.TileLayer(osmUrl, {minZoom: 1, maxZoom: 32, attribution: osmAttrib});
+                                                                                  //demo function now all functionality is running though this function. 
+                                                                                  function getTileNumber(lat, lon, zoom) {
+                                                                                    // pseudo code
+                                                                                    // n = 2 ^ zoom
+                                                                                    // xtile = n * ((lon_deg + 180) / 360)
+                                                                                    // ytile = n * (1 - (log(tan(lat_rad) + sec(lat_rad)) / π)) / 2 
+                                                                                    // php ytile = floor((1 - log(tan(deg2rad($lat)) + 1 / cos(deg2rad($lat))) / pi()) /2 * pow(2, $zoom));
 
-                                       // start the map in specified location
-                                       map.setView(new L.LatLng(-6.75669240286, 106.14514625),5);
-                                       map.addLayer(osm);
+                                                                                    console.log("lat: " +lat +" long: "+ lon);
+                                                                                    var n = Math.pow(2, zoom);
+                                                                                    var path =  Math.floor( n * ((lon + 180) / 360)) ;
+                                                                                    var row = Math.floor( ((1 - Math.log(Math.tan(deg2rad(lat)) + 1 / Math.cos(deg2rad(lat))) / Math.PI) /2 * Math.pow(2, zoom)));
+                                                                                     var rowhelper =( ((1 - Math.log(Math.tan(deg2rad(lat)) + 1 / Math.cos(deg2rad(lat))) / Math.PI) /2 * Math.pow(2, zoom)));
+                                                                                    console.log("Path: " + path +" Row: "+ row);
 
-                                       // add 321  layer
-                                        var layer321URL = '321/{z}/{x}/{y}.png';
-                                       var layer321 = new L.TileLayer(layer321URL, {maxZoom: 18, scheme:'tms'});
-                                       map.addLayer(layer321);
-                                       
-                                       
-                                        var tilegrid = new L.TileLayer.Canvas( layer321URL, {maxZoom: 18, scheme:'tms'});
-                                         tilegrid.drawTile = function(canvas, tilePoint, zoom) {
-                                        var ctx = canvas.getContext('2d');
+                                                                                    var ymax = 1 << zoom;
+                                                                                    var row = -(row-ymax)-1;
+                                                                                     var ymax = 1 << zoom;
+                                                                                      var rowhelper = -(rowhelper-ymax)-1;
 
-                                        ctx.strokeStyle = ctx.fillStyle = "red";
-                                        ctx.rect(0,0, 256,256);
-                                        //ctx.rect(0,0, 256/2,256/2);
-                                        //ctx.rect(256/2,256/2, 256,256);
-                                        ctx.stroke();
-                                        
-                                        //invert coordinates for tms path and row identification. 
-                                        var ymax = 1 << zoom;
-                                        var tmsy = -(tilePoint.y-ymax)-1;
-                                         
-                                        ctx.fillText('(' + tilePoint.x + ', ' + tmsy + ')',5,10);
-                                        };
-                                        
-                                        map.addLayer(tilegrid);
-                                        
-                                      
-                                       
-                                          
-                                       var baselayers= {
-                                            "Open Street Maps": osm,
-                                           "True Color": layer321
-                                           };                                           
-                                      var overlays = { 
-                                        "map": osm , 
-                                        "tilegrid": tilegrid,
-                                        "True Color": layer321
-                                        };
+                                                                                    var pathx = (( n * ((lon + 180) / 360) ) - path ) * 256;
+                                                                                    var rowy = -( rowhelper - row) * 256;
+                                                                                     console.log("Pathx: " + pathx +"px Rowy: "+ rowy+"px");
 
-                                       var layersControl = new L.Control.Layers( baselayers, overlays);
-                                       
-                                       map.addControl(layersControl);
-                                       
-                                       
-                                       // POP UP 
-                                        var popup = new L.Popup();
-                                
-                                                
-                                         map.on('click', function(e) {
-                            
-                                            var pnr = getTileNumber(e.latlng.lat, e.latlng.lng, map.getZoom());
-                                            popup.setLatLng(e.latlng);
-                                            popup.setContent("You clicked the map at " + e.latlng.toString() + 
-                                              "<br> and path and row numbers: " + pnr.Path+ ", "+ pnr.Row +
-                                              "<br> layerPoint: " + e.layerPoint +
-                                              "<br> containerPoint: " + e.containerPoint + 
-                                              "<br> Red: " + pnr.Data[0] + " Green" + pnr.Data[1] + " Blue: " + pnr.Data[2] + " Alpha: " + pnr.Data[3]);
-                                            map.openPopup(popup);
-                                            
-                                            
-                                             
-                                          });
-                                          var zoom= map.getZoom(); 
-                                          //use Math::Trig;
-                                          // function getTMSTilePath(tile) {
-                                          // 
-                                          //                                             var x = tile.x;
-                                          //                                             var z = tile.levelOfDetail;
-                                          //                                             // Invert tile y origin from top to bottom of map
-                                          //                                             var ymax = 1 << z;
-                                          //                                             var y = ymax - tile.y - 1;
-                                          // 
-                                          //                                             return location.href.substring(0, location.href.lastIndexOf('/')) + "/" + z + "/" + x + "/" + y + ".png";
-                                          //                                           }
-                                          function deg2rad (angle) {
-                                            // http://kevin.vanzonneveld.net
-                                            // +   original by: Enrique Gonzalez
-                                            // +     improved by: Thomas Grainger (http://graingert.co.uk)
-                                            // *     example 1: deg2rad(45);
-                                            // *     returns 1: 0.7853981633974483
-                                            return angle * .017453292519943295; // (angle / 180) * Math.PI;
-                                          }
-                                          function ImageExist(url) 
-                                          {
-                                             var img = new Image();
-                                             img.src = url;
-                                             return img.height != 0;
-                                          }
-                                          
-                                          //demo function now all functionality is running though this function. 
-                                          function getTileNumber(lat, lon, zoom) {
-                                            // pseudo code
-                                            // n = 2 ^ zoom
-                                            // xtile = n * ((lon_deg + 180) / 360)
-                                            // ytile = n * (1 - (log(tan(lat_rad) + sec(lat_rad)) / π)) / 2 
-                                            // php ytile = floor((1 - log(tan(deg2rad($lat)) + 1 / cos(deg2rad($lat))) / pi()) /2 * pow(2, $zoom));
-                                            
-                                            console.log("lat: " +lat +" long: "+ lon);
-                                            var n = Math.pow(2, zoom);
-                                            var path =  Math.floor( n * ((lon + 180) / 360)) ;
-                                            var row = Math.floor( ((1 - Math.log(Math.tan(deg2rad(lat)) + 1 / Math.cos(deg2rad(lat))) / Math.PI) /2 * Math.pow(2, zoom)));
-                                             var rowhelper =( ((1 - Math.log(Math.tan(deg2rad(lat)) + 1 / Math.cos(deg2rad(lat))) / Math.PI) /2 * Math.pow(2, zoom)));
-                                            console.log("Path: " + path +" Row: "+ row);
-                                            
-                                            var ymax = 1 << zoom;
-                                            var row = -(row-ymax)-1;
-                                             var ymax = 1 << zoom;
-                                              var rowhelper = -(rowhelper-ymax)-1;
-                                              
-                                            var pathx = (( n * ((lon + 180) / 360) ) - path ) * 256;
-                                            var rowy = -( rowhelper - row) * 256;
-                                             console.log("Pathx: " + pathx +"px Rowy: "+ rowy+"px");
-                                             
-                                             var img = new Image();
-                                             console.log('321/'+zoom+'/'+path+'/'+row+'.png');
-                                             img.src = '321/'+zoom+'/'+path+'/'+row+'.png';
-                                             if (ImageExist(img.src)){
+                                                                                     var img = new Image();
+                                                                                     console.log('321/'+zoom+'/'+path+'/'+row+'.png');
+                                                                                     img.src = '321/'+zoom+'/'+path+'/'+row+'.png';
+                                                                                     if (ImageExist(img.src)){
 
-                                             
-                                             var context = document.getElementById('canvas').getContext('2d');
-                                             // console.log(context.width);
-                                             context.clearRect ( 0 , 0 ,256 , 256 );
-                                              
-                                             context.drawImage(img, 0, 0);
-                                             context.strokeStyle = context.fillStyle = "red";
-                                              context.rect(pathx-5,rowy-5, 5,5);
-                                              context.stroke();
-                                             //context.fill();
-                                             // data = randomData();
-                                             //                                             redraw();
-                                              data = context.getImageData(pathx, rowy, 1, 1).data;
-                                             console.log("Red: "+ data[0] + " Green: "+ data[1]+ " Blue: "+ data[2])
-                                             
-                                               return new PathRowXYandData(path, row, pathx, rowy, data );
+
+                                                                                     var context = document.getElementById('canvas').getContext('2d');
+                                                                                     // console.log(context.width);
+                                                                                     context.clearRect ( 0 , 0 ,256 , 256 );
+
+                                                                                     context.drawImage(img, 0, 0);
+                                                                                     context.strokeStyle = context.fillStyle = "red";
+                                                                                      context.rect(pathx-5,rowy-5, 5,5);
+                                                                                      context.stroke();
+                                                                                     //context.fill();
+                                                                                     // data = randomData();
+                                                                                     //                                             redraw();
+                                                                                      data = context.getImageData(pathx, rowy, 1, 1).data;
+                                                                                     console.log("Red: "+ data[0] + " Green: "+ data[1]+ " Blue: "+ data[2])
+
+                                                                                       return new PathRowXYandData(path, row, pathx, rowy, data );
+                                                                                     }
+
+
+                                                                                     return 0;
+                                                                                     }
+
+                                                                                  //get TMS Path and Row numbers 
+                                                                                  function getTMSPathAndRow(lat, lon, zoom){ 
+                                                                                     console.log("lat: " +lat +" long: "+ lon);
+                                                                                      var n = Math.pow(2, zoom);
+                                                                                      var path =  Math.floor( n * ((lon + 180) / 360)) ;
+                                                                                      var row = Math.floor( ((1 - Math.log(Math.tan(deg2rad(lat)) + 1 / Math.cos(deg2rad(lat))) / Math.PI) /2 * Math.pow(2, zoom)));
+                                                                                      var rowhelper =( ((1 - Math.log(Math.tan(deg2rad(lat)) + 1 / Math.cos(deg2rad(lat))) / Math.PI) /2 * Math.pow(2, zoom)));
+                                                                                      console.log("Path: " + path +" Row: "+ row);
+
+                                                                                      var ymax = 1 << zoom;
+                                                                                      var row = -(row-ymax)-1;
+                                                                                      var ymax = 1 << zoom;
+                                                                                      var rowhelper = -(rowhelper-ymax)-1;
+
+                                                                                      // var pathx = (( n * ((lon + 180) / 360) ) - path ) * 256;
+                                                                                      //   var rowy = -( rowhelper - row) * 256;
+                                                                                      //    console.log("Pathx: " + pathx +"px Rowy: "+ rowy+"px");
+
+                                                                                    return new PathRow(path, row);
+                                                                                    }
+
+                                                                                  // get Path and Row - it is not tms so the y is not inverted. 
+                                                                                    function getPathAndRow(lat, lon, zoom){ 
+                                                                                       // console.log("lat: " +lat +" long: "+ lon);
+                                                                                        var n = Math.pow(2, zoom);
+                                                                                        var path =  Math.floor( n * ((lon + 180) / 360)) ;
+                                                                                        var row = Math.floor( ((1 - Math.log(Math.tan(deg2rad(lat)) + 1 / Math.cos(deg2rad(lat))) / Math.PI) /2 * Math.pow(2, zoom)));
+                                                                                         // var rowhelper =( ((1 - Math.log(Math.tan(deg2rad(lat)) + 1 / Math.cos(deg2rad(lat))) / Math.PI) /2 * Math.pow(2, zoom)));
+                                                                                        // console.log("Path: " + path +" Row: "+ row);
+
+
+                                                                                        // var pathx = (( n * ((lon + 180) / 360) ) - path ) * 256;
+                                                                                        // var rowy = -( ( ((1 - Math.log(Math.tan(deg2rad(lat)) + 1 / Math.cos(deg2rad(lat))) / Math.PI) /2 * Math.pow(2, zoom))) - row) * 256;
+                                                                                        //  console.log("Pathx: " + pathx +"px Rowy: "+ rowy+"px");
+
+                                                                                      return new PathRow(path, row);
+                                                                                      }
+
+                                                                                      function getHistogramWithTMSPathRowXYandData(lat,lon, zoom, data){
+                                                                                        // console.log("lat: " +lat +" long: "+ lon);
+                                                                                        var n = Math.pow(2, zoom);
+                                                                                        var path =  Math.floor( n * ((lon + 180) / 360)) ;
+                                                                                        var row = Math.floor( ((1 - Math.log(Math.tan(deg2rad(lat)) + 1 / Math.cos(deg2rad(lat))) / Math.PI) /2 * Math.pow(2, zoom)));
+                                                                                        var rowhelper =( ((1 - Math.log(Math.tan(deg2rad(lat)) + 1 / Math.cos(deg2rad(lat))) / Math.PI) /2 * Math.pow(2, zoom)));
+                                                                                        // console.log("Path: " + path +" Row: "+ row);
+
+                                                                                        var ymax = 1 << zoom;
+                                                                                        var row = -(row-ymax)-1;
+                                                                                        var ymax = 1 << zoom;
+                                                                                        var rowhelper = -(rowhelper-ymax)-1;
+
+                                                                                        var pathx = (( n * ((lon + 180) / 360) ) - path ) * 256;
+                                                                                        var rowy = -( rowhelper - row) * 256;
+                                                                                        // console.log("Pathx: " + pathx +"px Rowy: "+ rowy+"px");
+
+
+                                                                                        //DATA IS ARRAY
+                                                                                        //DATA EXIST
+                                                                                        //GET 321 PIXEL VALUE 
+                                                                                        //GET 754 PIXEL VALUE 
+
+                                                                                        var img = new Image();
+                                                                                        console.log('321/'+zoom+'/'+path+'/'+row+'.png');
+                                                                                        img.src = '321/'+zoom+'/'+path+'/'+row+'.png';
+                                                                                        if (ImageExist(img.src)){
+
+
+                                                                                        var context = document.getElementById('canvas').getContext('2d');
+                                                                                        context.drawImage(img, 0, 0);
+                                                                                        data = context.getImageData(pathx, rowy, 1, 1).data;
+                                                                                        console.log("Red: "+ data[0] + " Green: "+ data[1]+ " Blue: "+ data[2]);
+
+                                                                                        return new bandHistogramData(band1, band2, band3, band4, band5, band61, band62, band7, band8 ); 
+                                                                                        }
+                                                                                        return 0
+
+                                                                                     }
+                                             function Color(r,g,b)
+                                             {
+                                               this.Red = r;
+                                               this.Green = g;
+                                               this.Blue = b;
                                              }
-                                            
-                                  
-                                             return 0;
-                                             }
-                                          
-                                          //get TMS Path and Row numbers 
-                                          function getTMSPathAndRow(lat, lon, zoom){ 
-                                             console.log("lat: " +lat +" long: "+ lon);
-                                              var n = Math.pow(2, zoom);
-                                              var path =  Math.floor( n * ((lon + 180) / 360)) ;
-                                              var row = Math.floor( ((1 - Math.log(Math.tan(deg2rad(lat)) + 1 / Math.cos(deg2rad(lat))) / Math.PI) /2 * Math.pow(2, zoom)));
-                                              var rowhelper =( ((1 - Math.log(Math.tan(deg2rad(lat)) + 1 / Math.cos(deg2rad(lat))) / Math.PI) /2 * Math.pow(2, zoom)));
-                                              console.log("Path: " + path +" Row: "+ row);
 
-                                              var ymax = 1 << zoom;
-                                              var row = -(row-ymax)-1;
-                                              var ymax = 1 << zoom;
-                                              var rowhelper = -(rowhelper-ymax)-1;
-
-                                              // var pathx = (( n * ((lon + 180) / 360) ) - path ) * 256;
-                                              //   var rowy = -( rowhelper - row) * 256;
-                                              //    console.log("Pathx: " + pathx +"px Rowy: "+ rowy+"px");
-                                              
-                                            return new PathRow(path, row);
-                                            }
-                                            
-                                          // get Path and Row - it is not tms so the y is not inverted. 
-                                            function getPathAndRow(lat, lon, zoom){ 
-                                               // console.log("lat: " +lat +" long: "+ lon);
-                                                var n = Math.pow(2, zoom);
-                                                var path =  Math.floor( n * ((lon + 180) / 360)) ;
-                                                var row = Math.floor( ((1 - Math.log(Math.tan(deg2rad(lat)) + 1 / Math.cos(deg2rad(lat))) / Math.PI) /2 * Math.pow(2, zoom)));
-                                                 // var rowhelper =( ((1 - Math.log(Math.tan(deg2rad(lat)) + 1 / Math.cos(deg2rad(lat))) / Math.PI) /2 * Math.pow(2, zoom)));
-                                                // console.log("Path: " + path +" Row: "+ row);
-
-                                              
-                                                // var pathx = (( n * ((lon + 180) / 360) ) - path ) * 256;
-                                                // var rowy = -( ( ((1 - Math.log(Math.tan(deg2rad(lat)) + 1 / Math.cos(deg2rad(lat))) / Math.PI) /2 * Math.pow(2, zoom))) - row) * 256;
-                                                //  console.log("Pathx: " + pathx +"px Rowy: "+ rowy+"px");
-
-                                              return new PathRow(path, row);
+                                              function PathAndRow(path, row )
+                                              {
+                                                var pathandrow = {
+                                                  path : path,
+                                                  row: row
+                                                };
+                                                this.Path = path;
+                                                this.Row = row;
                                               }
-                                              
-                                              function getHistogramWithTMSPathRowXYandData(lat,lon, zoom, data){
-                                                // console.log("lat: " +lat +" long: "+ lon);
-                                                var n = Math.pow(2, zoom);
-                                                var path =  Math.floor( n * ((lon + 180) / 360)) ;
-                                                var row = Math.floor( ((1 - Math.log(Math.tan(deg2rad(lat)) + 1 / Math.cos(deg2rad(lat))) / Math.PI) /2 * Math.pow(2, zoom)));
-                                                var rowhelper =( ((1 - Math.log(Math.tan(deg2rad(lat)) + 1 / Math.cos(deg2rad(lat))) / Math.PI) /2 * Math.pow(2, zoom)));
-                                                // console.log("Path: " + path +" Row: "+ row);
 
-                                                var ymax = 1 << zoom;
-                                                var row = -(row-ymax)-1;
-                                                var ymax = 1 << zoom;
-                                                var rowhelper = -(rowhelper-ymax)-1;
+                                               function PathRowXYandData(path, row, x, y, data )
+                                                {
+                                                  var pathandrow = {
+                                                    path : path,
+                                                    row: row
+                                                  };
+                                                  this.Path = path;
+                                                  this.Row = row;
+                                                  this.x = x; 
+                                                  this.y = y;
+                                                  this.Data = data; 
 
-                                                var pathx = (( n * ((lon + 180) / 360) ) - path ) * 256;
-                                                var rowy = -( rowhelper - row) * 256;
-                                                // console.log("Pathx: " + pathx +"px Rowy: "+ rowy+"px");
-
-
-                                                //DATA IS ARRAY
-                                                //DATA EXIST
-                                                //GET 321 PIXEL VALUE 
-                                                //GET 754 PIXEL VALUE 
-                                                
-                                                var img = new Image();
-                                                console.log('321/'+zoom+'/'+path+'/'+row+'.png');
-                                                img.src = '321/'+zoom+'/'+path+'/'+row+'.png';
-                                                if (ImageExist(img.src)){
-
-
-                                                var context = document.getElementById('canvas').getContext('2d');
-                                                context.drawImage(img, 0, 0);
-                                                data = context.getImageData(pathx, rowy, 1, 1).data;
-                                                console.log("Red: "+ data[0] + " Green: "+ data[1]+ " Blue: "+ data[2]);
-                                                
-                                                return new bandHistogramData(band1, band2, band3, band4, band5, band61, band62, band7, band8 ); 
                                                 }
-                                                return 0
+                                          
+                                          
+                                              map = new L.Map('map');
+                                               // create OSM tile layer with correct attribution
+                                               var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+                                               var osmAttrib='Map data Â© OpenStreetMap contributors';
+                                               var osm = new L.TileLayer(osmUrl, {minZoom: 1, maxZoom: 32, attribution: osmAttrib});
 
+                                               // start the map in specified location
+                                               map.setView(new L.LatLng(-6.75669240286, 106.14514625),5);
+                                               map.addLayer(osm);
+
+                                               // add 321  layer
+                                                var layer321URL = '321/{z}/{x}/{y}.png';
+                                               var layer321 = new L.TileLayer(layer321URL, {maxZoom: 18, scheme:'tms'});
+                                               map.addLayer(layer321);
+                                               
+                                                var tilegrid = new L.TileLayer.Canvas( layer321URL, {maxZoom: 18, scheme:'tms'});
+                                                  tilegrid.drawTile = function(canvas, tilePoint, zoom) {
+                                                 var ctx = canvas.getContext('2d');
+
+                                                 ctx.strokeStyle = ctx.fillStyle = "red";
+                                                 ctx.rect(0,0, 256,256);
+                                                 //ctx.rect(0,0, 256/2,256/2);
+                                                 //ctx.rect(256/2,256/2, 256,256);
+                                                 ctx.stroke();
+
+                                                 //invert coordinates for tms path and row identification. 
+                                                 var ymax = 1 << zoom;
+                                                 var tmsy = -(tilePoint.y-ymax)-1;
+
+                                                 ctx.fillText('(' + tilePoint.x + ', ' + tmsy + ')',5,10);
+                                                 };
+
+                                                 map.addLayer(tilegrid);
+
+
+
+
+                                                var baselayers= {
+                                                     "Open Street Maps": osm,
+                                                    "True Color": layer321
+                                                    };                                           
+                                               var overlays = { 
+                                                 "map": osm , 
+                                                 "tilegrid": tilegrid,
+                                                 "True Color": layer321
+                                                 };
+
+                                                var layersControl = new L.Control.Layers( baselayers, overlays);
+
+                                                map.addControl(layersControl);
+
+
+                                                // POP UP 
+                                                 var popup = new L.Popup();
+
+
+                                                  map.on('click', function(e) {
+
+                                                     var pnr = getTileNumber(e.latlng.lat, e.latlng.lng, map.getZoom());
+                                                     popup.setLatLng(e.latlng);
+                                                     popup.setContent("You clicked the map at " + e.latlng.toString() + 
+                                                       "<br> and path and row numbers: " + pnr.Path+ ", "+ pnr.Row +
+                                                       "<br> layerPoint: " + e.layerPoint +
+                                                       "<br> containerPoint: " + e.containerPoint + 
+                                                       "<br> Red: " + pnr.Data[0] + " Green" + pnr.Data[1] + " Blue: " + pnr.Data[2] + " Alpha: " + pnr.Data[3]);
+                                                     map.openPopup(popup);
+
+
+
+                                                   });
+                                                   var zoom= map.getZoom();
+                                          	/* Initialize the SVG layer */
+                                          	map._initPathRoot()    
+
+                                          	/* We simply pick up the SVG from the map object */
+                                            var svg = d3.select("#graph").select("svg"),
+                                            g = svg.append("g");
+                                             function randomData() {
+                                                 return d3.range(8).map(function(i) {
+                                                     return {x: i*10,  y: Math.random()*255};
+                                                 });
                                              }
-                                           
-                                    };
-                                  
-                                      
-                                   </script>
-  
+                                            var data = randomData();// [             // d3.range(10).map(function(i) {
+                                            // return {x: i / 10, y: (Math.sin(i / 3) + 2) / 4};
+                                            // });
+
+                                            var margin = {top: 10, right: 10, bottom: 20, left: 40},
+                                                width = 640 - margin.left - margin.right,
+                                                height = 180 - margin.top - margin.bottom;
+
+                                            var x = d3.scale.linear()
+                                                .domain([0, 70])
+                                                .range([0, width]);
+
+                                            var y = d3.scale.linear()
+                                                .domain([0, 255])
+                                                .range([height, 0]);
+
+                                            var xAxis = d3.svg.axis()
+                                                .scale(x)
+                                                .orient("bottom");
+
+                                            var yAxis = d3.svg.axis()
+                                                .scale(y)
+                                                .orient("left");
+
+                                            var line = d3.svg.line()
+                                                .x(function(d) { return x(d.x); })
+                                                .y(function(d) { return y(d.y); });
+
+                                            var svg = d3.select("#graph").append("svg")
+                                                .datum(data)
+                                                .attr("width", width + margin.left + margin.right)
+                                                .attr("height", height + margin.top + margin.bottom)
+                                              .append("g")
+                                                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                                              svg.append("g")
+                                              .attr("class", "x axis")
+                                              .attr("transform", "translate(0," + height + ")")
+                                              .call(xAxis);
+
+                                              svg.append("g")
+                                              .attr("class", "y axis")
+                                              .call(yAxis);
+                                            
+                                             svg.append("path")
+                                                 .attr("class", "line")
+                                                 .attr("d", line);
+
+                                            svg.selectAll(".dot")
+                                                .data(data)
+                                                .enter().append("circle")
+                                                .attr("class", "dot")
+                                                .attr("cx", line.x())
+                                                .attr("cy", line.y())
+                                                .attr("r", 3.5);
+                                                
+
+                                            var popup = new L.Popup();
+                                            
+                                            function update() {
+                                              data = randomData();
+                                              d3.selectAll(".dot")
+                                                    .data(data)
+                                                    // .attr("class", "dot")
+                                                     .attr("cx", line.x())
+                                                      .attr("cy", line.y())
+                                                      .attr("r", 3.5);
+                                                    
+                                              d3.selectAll("path.line")
+                                               
+                                                .data([data]) // set the new data
+                                                .attr("d", line); // apply the new data values
+
+
+                                                      //.attr("cx", line.x())
+                                                      //.attr("cy", line.y());
+                                            		  
+                                            }                                           
+                                            map.on('click', function(e) {
+                                              // var pnr = getTileNumber(e.latlng.lat, e.latlng.lng, map.getZoom());
+                                              popup.setLatLng(e.latlng);
+                                              popup.setContent("You clicked the map at " + e.latlng.toString() + 
+                                              // "<br> and path and row numbers: " + pnr.Path+ ", "+ pnr.Row +
+                                              "<br> layerPoint: " + e.layerPoint +
+                                              "<br> containerPoint: " + e.containerPoint  
+                                              // "<br> Red: " + pnr.Data[0] + " Green" + pnr.Data[1] + " Blue: " + pnr.Data[2] + " Alpha: " + pnr.Data[3]
+                                              );
+                                              map.openPopup(popup);
+
+                                              update();
+
+                                            });
+
+
+                                          </script>
                                 </body>
                                 </html>
