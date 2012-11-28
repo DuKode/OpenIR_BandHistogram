@@ -2,7 +2,17 @@
 <meta charset="utf-8">
 <style>
 
+.container{
+  padding:-20px;
+  width: 100%;
+   height: 100%;
+   position: absolute;
+   background-color:#00f;
+   font-family: 'Open Sans', sans-serif;
+ }
 
+
+}
 .axis path, .axis line {
   fill: none;
   stroke: #000;
@@ -11,8 +21,8 @@
 rect{
   fill: steelblue;
   stroke: black;
-  stroke-width: 1.5px;
-  fill-opacity: 0.4;
+  stroke-width: .5px;
+  fill-opacity: 0.1;
 }
 .line {
   fill: none;
@@ -28,7 +38,8 @@ rect{
 
 svg , g
 	{
-		border: solid 3px red;
+	  margin:20px;
+		border: solid 0px red;
 		stroke-width: 1.5px;
 	}
 	circle {
@@ -36,10 +47,14 @@ svg , g
 		fill-opacity: .8;
 	}
 </style>
+
                                         <head>
-                                        <title>data</title>
+                                         <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+                                         
+                                         <title>data</title>
                                         
 					<link rel="stylesheet" href="CloudMade-Leaflet-v0.3.1/dist/leaflet.css" />
+					
 					<!--[if lte IE 8]>
 					<link rel="stylesheet" href="http://openIR.media.mit.edu/html_src/CloudMade-Leaflet-v0.3.1/dist/leaflet.ie.css" />
 					<![endif]-->  
@@ -56,11 +71,21 @@ svg , g
  
                                   
                                   
+                                    <div class="container">
+                                          <div id="title" style="position: absolute; margin:10px; z-index: 999; font-size:20px" >Band Histograms</div>
+                                         <div id="graph" style="position: absolute; z-index: 10;
+                                           top: 0; margin:10px;
+                                           left: 0;background-color:#fff" ></div>
+                                           
+                                          
+                                           <div id="map" style="width:100%;
+                                             height: 100%;  top: 0; left: 0;position:absolute;
+                                               z-index:1;"></div>
+                                         
+                                    </div>
                                   
                                 
-                                       <div id="graph" style="width:600px; height:260px; z-index:1"></div>
-                                        <div id="map" style="width:720px; height:560px; z-index:1"></div>
-                                        <div><canvas id="canvas" width="256px" height="256px" style="width:256px; height:256px; z-index:2 align:right; "></canvas></div>
+                                      <div id="right"><canvas id="canvas" width="256px" height="256px" style="width:256px; height:256px; z-index:2 align:right; "></canvas></div>
                                   
                                 
                                   
@@ -347,6 +372,7 @@ svg , g
                                           var yAxis = d3.svg.axis()
                                              .scale(y)
                                              .orient("left");
+                                            
                                            
                                             var line = d3.svg.line()
                                                 .x(function(d) { return x(d.x); })
@@ -412,7 +438,7 @@ svg , g
                                                 // .attr("text-anchor", "middle")
                                                 .attr("font-family", "sans-serif")
                                                 .attr("font-size", "12px")
-                                                .attr("fill", "blue");
+                                                .attr("fill", "black");
                                                 
                                                 
                                                   
